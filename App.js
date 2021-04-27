@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Button, View, Text, ImageBackground, Image } from 'react-native';
+import { Button, View, Text, ImageBackground, Image, TouchableOpacity } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { ListItem, Avatar } from 'react-native-elements'
@@ -30,15 +30,22 @@ function LoginScreen({ navigation }) {
           <Text style={styles.welcome}>Welcome to Rocket Elevators!</Text>
            <Text style={styles.login}>Insert your email to login:</Text>
 
-          <label>
-            <p>Email</p>
+          <label style={styles.input}>
+            
+            
             <input type="text" />
           </label>
 
-          <Button
-            title="Login"
+
+
+
+          <TouchableOpacity
             onPress={() => navigation.navigate('Home')}
-          />
+            style={styles.button}>
+            <Text style={styles.buttonText}>Login</Text>
+          </TouchableOpacity>
+
+
       </View>
     </ImageBackground>
   </View >)
@@ -46,16 +53,25 @@ function LoginScreen({ navigation }) {
 
 function DetailsScreen({ navigation }) {
   return (
-    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-      <Text>Details Screen</Text>
 
+    
+    <View style={styles.container} >
+    <ImageBackground source={myBackground} style={styles.image}>
+      <View style={styles.viewStyle}>
+
+      <Text>Details Screen</Text>
+ 
     </View>
+    </ImageBackground>
+  </View >
   );
 }
 
 function HomeScreen({ navigation }) {
   return (
-    <View>
+    <View style={styles.container} >
+    <ImageBackground source={myBackground} style={styles.image}>
+      <View style={styles.viewStyle}>
       {
         list.map((l, i) => (
           <ListItem key={i} bottomDivider onPress={() => navigation.navigate('Details')}>
@@ -68,6 +84,9 @@ function HomeScreen({ navigation }) {
         ))
       }
     </View>
+    </ImageBackground>
+    </View>
+
   );
 }
 
