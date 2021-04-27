@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { ImageBackground, Image, Text, View, TextInput, TouchableOpacity } from 'react-native';
 import logo from '../assets/R1.jpg';
-import axios from 'axios';
+
 var myBackground = require('../assets/R2.png');
 
 const Login = (props) => {
@@ -21,8 +21,7 @@ const Login = (props) => {
             })
             .catch(function (error) {
                 
-                console.log(`This ${employee_email} is incorrect.`);
-                alert(`${employee_email} is unavailable, please insert a valide email. Thank you!`);
+                
             })
             .then(function () {
              
