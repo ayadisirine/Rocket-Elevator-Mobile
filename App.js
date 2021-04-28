@@ -1,8 +1,9 @@
 import * as React from 'react';
-import { Button, View, Text, ImageBackground, Image, TouchableOpacity } from 'react-native';
+import {  View, Text, TextInput, ImageBackground, Image, TouchableOpacity } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { ListItem, Avatar } from 'react-native-elements'
+import { useState } from 'react';
 
 const list = [
   {
@@ -22,6 +23,7 @@ var myBackground = require('./assets/R1.jpg');
 var logo = require('./assets/R2.png');
 
 function LoginScreen({ navigation }) {
+  const [email, setEmail] = useState('');
   return(
   <View style={styles.container} >
     <ImageBackground source={myBackground} style={styles.image}>
@@ -33,14 +35,58 @@ function LoginScreen({ navigation }) {
           <label style={styles.input}>
             
             
-            <input type="text" />
+          <TextInput
+                        style={styles.input}
+
+                        onChangeText={(value) => {
+                            setEmail(value)
+                        }}
+                        value={email}
+                    />
           </label>
 
-
-
-
           <TouchableOpacity
-            onPress={() => navigation.navigate('Home')}
+            onPress={() => {
+               
+              //navigation.navigate('Home');  
+              console.log("before calling checkMail : " + email);
+              
+
+              var myHeaders = new Headers();
+              myHeaders.append("Content-Type", "application/json");
+              
+              
+              var requestOptions = {
+                method: 'GET',
+                headers: myHeaders,
+                redirect: 'follow',
+                mode: 'no-cors'
+              };
+              var url = "https://sirinerocketelevatorrestapi.azurewebsites.net/api/User/" + email;
+              var url = "https://sirinerocketelevatorrestapi.azurewebsites.net/api/User/all";
+
+              let test = fetch(url, requestOptions)
+              .then(response => response.text())
+              .then(result => console.log(result))
+              .catch(error => console.log('error', error));
+              
+
+             
+ 
+
+/*
+                .then(response => {response.text();
+                  console.log("response " + response.text);                 
+                  const statusCode = response.status;
+                  console.log("status code : " + statusCode );
+                  if (statusCode == 200) {navigation.navigate('Home');}
+                  else alert("Wrong email");
+                })
+                .then(result => {console.log("success " + result.text);  })
+                .catch(error => {console.log('error', error); });*/
+                
+                 //usual call like vanilla javascript, but uses this operator
+              }}  
             style={styles.button}>
             <Text style={styles.buttonText}>Login</Text>
           </TouchableOpacity>
@@ -50,6 +96,9 @@ function LoginScreen({ navigation }) {
     </ImageBackground>
   </View >)
 }
+
+
+
 
 function DetailsScreen({ navigation }) {
   return (
