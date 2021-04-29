@@ -1,9 +1,10 @@
 import * as React from 'react';
-import {  View, Text, TextInput, ImageBackground, Image, TouchableOpacity } from 'react-native';
+import {  FlatList, View, Text, TextInput, ImageBackground, Image, TouchableOpacity } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { ListItem, Avatar } from 'react-native-elements'
 import { useState } from 'react';
+import axios from 'axios';
 
 const list = [
   {
@@ -60,33 +61,28 @@ function LoginScreen({ navigation }) {
                 method: 'GET',
                 headers: myHeaders,
                 redirect: 'follow',
-                mode: 'no-cors'
+                mode: 'no-cors',
               };
-              var url = "https://sirinerocketelevatorrestapi.azurewebsites.net/api/User/" + email;
-              var url = "https://sirinerocketelevatorrestapi.azurewebsites.net/api/User/all";
-
-              let test = fetch(url, requestOptions)
-              .then(response => response.text())
-              .then(result => console.log(result))
-              .catch(error => console.log('error', error));
-              
-
-             
- 
-
-/*
-                .then(response => {response.text();
-                  console.log("response " + response.text);                 
+              var url = "https://sirinerocketelevatorrestapi.azurewebsites.net/api/User/"+email;
+              return axios.get(url)
+              .then(function (response) {
                   const statusCode = response.status;
-                  console.log("status code : " + statusCode );
-                  if (statusCode == 200) {navigation.navigate('Home');}
-                  else alert("Wrong email");
-                })
-                .then(result => {console.log("success " + result.text);  })
-                .catch(error => {console.log('error', error); });*/
-                
-                 //usual call like vanilla javascript, but uses this operator
-              }}  
+                  console.log("status : " + statusCode);
+                  if (statusCode == 200) {
+                    navigation.navigate('Home')
+                  }
+              })
+              .catch(function (error) {
+                  
+                  console.log('This is user email is incorrect.');
+                  alert('User email incorrect !!!!!!!');
+              })
+              .then(function () {
+               
+              });
+
+
+            }} 
             style={styles.button}>
             <Text style={styles.buttonText}>Login</Text>
           </TouchableOpacity>
@@ -94,40 +90,49 @@ function LoginScreen({ navigation }) {
 
       </View>
     </ImageBackground>
-  </View >)
-}
-
-
-
-
-function DetailsScreen({ navigation }) {
-  return (
-
-    
-    <View style={styles.container} >
-    <ImageBackground source={myBackground} style={styles.image}>
-      <View style={styles.viewStyle}>
-
-      <Text>Details Screen</Text>
- 
-    </View>
-    </ImageBackground>
   </View >
-  );
+  )
 }
+
+
+
+
+
 
 function HomeScreen({ navigation }) {
+
+
+  const [elevators, setElevators] = useState([])
+
+
+      axios.get('https://sirinerocketelevatorrestapi.azurewebsites.net/api/elevators/status/intervention')
+          .then(response => {
+              console.log(response.data)
+              setElevators(response.data)
+          })
+          .catch(err => {
+              console.log(err)
+          })
+  
+
+  const StatusScreen = (id, status) => {
+      props.navigation.navigate('Intervention', {
+          elevatorID: id,
+          elevatorStatus: status
+      })
+  };
+
   return (
     <View style={styles.container} >
     <ImageBackground source={myBackground} style={styles.image}>
       <View style={styles.viewStyle}>
       {
-        list.map((l, i) => (
-          <ListItem key={i} bottomDivider onPress={() => navigation.navigate('Details')}>
+        elevators.map((l, i) => (
+          <ListItem key={i} bottomDivider onPress={() => StatusScreen(l.id, l.status)}><Text style={styles.textStyle}> Elevator # {l.id} is "{l.status}"</Text>
             <Avatar source={{uri: l.avatar_url}} />
             <ListItem.Content>
-              <ListItem.Title>{l.name}</ListItem.Title>
-              <ListItem.Subtitle>{l.subtitle}</ListItem.Subtitle>
+              <ListItem.Title>{l.id}</ListItem.Title>
+              
             </ListItem.Content>
           </ListItem>
         ))
@@ -137,7 +142,7 @@ function HomeScreen({ navigation }) {
     </View>
 
   );
-}
+                  }
 
 const Stack = createStackNavigator();
 
@@ -147,7 +152,7 @@ function App() {
       <Stack.Navigator initialRouteName="Login">
         <Stack.Screen name="Login" component={LoginScreen} />
         <Stack.Screen name="Home" component={HomeScreen} />
-        <Stack.Screen name="Details" component={DetailsScreen} />
+        
       </Stack.Navigator>
     </NavigationContainer>
   );
@@ -158,21 +163,20 @@ const styles = {
      // marginTop: Platform.OS === "android" ? 24 : 0
   },
   instructions: {
-      color: '#333333',
-      marginBottom: 5,
-      textAlign: 'center',
-    },
-    welcome: {
-      fontSize: 20,
-      margin: 10,
-      textAlign: 'center',
-      color: 'Red',
-    },
+    color: '#333333',
+    marginBottom: 5,
+    textAlign: 'center',
+  },
+  welcome: {
+    fontSize: 20,
+    margin: 10,
+    textAlign: 'center',
+    color: 'Red',
+  },
   viewStyle: {
-      flex: 1,
-      marginTop: 0,
-      alignItems: 'center',
-      
+    flex: 1,
+    marginTop: 0,
+    alignItems: 'center',
   },
   login: {
       fontSize: 20,
